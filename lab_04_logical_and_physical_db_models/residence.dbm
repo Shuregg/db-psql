@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,78" last-zoom="1" max-obj-count="4"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="new_database" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<table name="residents" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1200" y="540"/>
+	<column name="first_name" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="patronymic">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="room_number" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="date_of_stay" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="resident_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="residents_pk" type="pk-constr" table="public.residents">
+		<columns names="resident_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="rooms" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="420" y="560"/>
+	<column name="room_number" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="floor" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="is_busy" not-null="true">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="money" length="0"/>
+	</column>
+	<column name="places" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="rooms_pk" type="pk-constr" table="public.rooms">
+		<columns names="room_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="service_staff" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="400" y="180"/>
+	<column name="staff_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="patronymic">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="serviced_room">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="salary" not-null="true">
+		<type name="money" length="0"/>
+	</column>
+</table>
+
+<table name="residents_rooms" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="820" y="600"/>
+	<column name="resident_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="room_number" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+</table>
+
+<constraint name="serviced_room_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.rooms" table="public.service_staff">
+	<columns names="serviced_room" ref-type="src-columns"/>
+	<columns names="room_number" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="resident_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.residents" table="public.residents_rooms">
+	<columns names="resident_id" ref-type="src-columns"/>
+	<columns names="resident_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="room_number_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.rooms" table="public.residents_rooms">
+	<columns names="room_number" ref-type="src-columns"/>
+	<columns names="room_number" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_service_staff_rooms" type="relfk" layers="0"
+	 src-table="public.service_staff"
+	 dst-table="public.rooms" reference-fk="serviced_room_fkey"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_residents_rooms_residents" type="relfk" layers="0"
+	 src-table="public.residents_rooms"
+	 dst-table="public.residents" reference-fk="resident_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_residents_rooms_rooms" type="relfk" layers="0"
+	 src-table="public.residents_rooms"
+	 dst-table="public.rooms" reference-fk="room_number_fkey"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>
