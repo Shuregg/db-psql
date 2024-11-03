@@ -230,3 +230,56 @@ SELECT
 FROM 
     professors p;
 	
+-- Additional task
+CREATE TABLE a (xa INTEGER, ya SERIAL);
+CREATE TABLE b (xb INTEGER, yb SERIAL);
+
+INSERT INTO a VALUES (1), (2), (2), (3), (4);
+INSERT INTO b VALUES (1), (2), (3), (3), (5);
+
+-- 1.
+SELECT * FROM a
+INNER JOIN b ON a.xa = b.xb
+-- xa	ya	xb	xy
+-- 1	1	1	1	
+-- 2	2	2	2
+-- 2	3	2	2
+-- 3	4	3	3
+-- 3	5	3	4
+
+-- 2.
+SELECT * FROM a
+RIGHT JOIN b ON a.xa = b.xb
+-- xa	ya	xb	xy
+-- 1	1	1	1	
+-- 2	2	2	2
+-- 3	4	3	3
+-- 3	4	3	4
+-- null	null	5	5
+	
+-- 3.
+SELECT * FROM a
+CROSS JOIN b
+-- xa	ya	xb	xy
+-- 1	1	1	1	
+-- 1	1	2	2
+-- 1	1	3	3
+-- 1	1	3	4
+-- 1	1	5	5
+-- 2	2	1	1	
+-- 2	2	2	2
+-- 2	2	3	3
+-- 2	2	3	4
+-- 2	2	5	5
+-- ...
+
+-- 4.
+SELECT * FROM a
+LEFT JOIN b ON a.xa = b.xb
+-- xa	ya	xb	 xy
+-- 1	1	1	 1	
+-- 2	2	2	 2
+-- 2	3	2	 2
+-- 3	4	3	 3
+-- 3	4	3	 4
+-- 4	5	null null
