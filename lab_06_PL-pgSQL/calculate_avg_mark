@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION calculate_avg_mark(student_id_ INTEGER) RETURNS NUMERIC AS $$
+DECLARE
+    avg_mark NUMERIC;
+BEGIN
+    SELECT AVG(mark)
+    INTO avg_mark
+    FROM field_comprehensions
+    WHERE field_comprehensions.student_id = student_id;
+    
+    RETURN avg_mark;
+END;
+$$ LANGUAGE PLPGSQL;
