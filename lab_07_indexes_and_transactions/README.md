@@ -352,12 +352,65 @@ ORDER BY generated_code;
 
 |Преподаватель|Методист|
 |-|-|
-||Смотрит результат до фиксации изменений преподавателем;|
+|||
 |BEGIN;||
 |Изменяет оценку;||
 |Добавляет оценку;||
+||Смотрит результат до фиксации изменений преподавателем;|
 |COMMIT||
 ||Смотрит результат после фиксации изменений преподавателем;|
+
+|Профессор                                                          |Методист                                                       |
+|-------------------------------------------------------------------|---------------------------------------------------------------|
+|BEGIN;                                                             |                                                               |
+|    UPDATE field_comprehensions                                    |                                                               |
+|    SET mark = 5                                                   |                                                               |
+|    WHERE                                                          |                                                               |
+|    student_id = (                                                 |                                                               |
+|        SELECT student_id FROM students WHERE last_name = 'Шариков'|                                                               |
+|        AND first_name = 'Полиграф'                                |                                                               |
+|    )                                                              |                                                               |
+|    AND field IN (                                                 |                                                               |
+|        SELECT field_id                                            |                                                               |
+|        FROM fields                                                |                                                               |
+|        WHERE (                                                    |                                                               |
+|            field_name = 'Операционные системы'                    |                                                               |
+|            OR (field_name = 'Базы данных' AND semester = 7)       |                                                               |
+|        )                                                          |                                                               |
+|    );                                                             |                                                               |
+|                                                                   |BEGIN;                                                         |
+|                                                                   |SELECT mark                                                    |
+|                                                                   |FROM field_comprehensions                                      |
+|                                                                   |WHERE                                                          |
+|                                                                   |student_id = (                                                 |
+|                                                                   |    SELECT student_id FROM students WHERE last_name = 'Шариков'|
+|                                                                   |    AND first_name = 'Полиграф'                                |
+|                                                                   |)                                                              |
+|                                                                   |AND field IN (                                                 |
+|                                                                   |    SELECT field_id                                            |
+|                                                                   |    FROM fields                                                |
+|                                                                   |    WHERE (                                                    |
+|                                                                   |        field_name = 'Операционные системы'                    |
+|                                                                   |        OR (field_name = 'Базы данных' AND semester = 7)       |
+|                                                                   |    )                                                          |
+|                                                                   |);                                                             |
+|COMMIT;                                                            |                                                               |
+|                                                                   |SELECT mark                                                    |
+|                                                                   |FROM field_comprehensions                                      |
+|                                                                   |WHERE                                                          |
+|                                                                   |student_id = (                                                 |
+|                                                                   |    SELECT student_id FROM students WHERE last_name = 'Шариков'|
+|                                                                   |    AND first_name = 'Полиграф'                                |
+|                                                                   |)                                                              |
+|                                                                   |AND field IN (                                                 |
+|                                                                   |    SELECT field_id                                            |
+|                                                                   |    FROM fields                                                |
+|                                                                   |    WHERE (                                                    |
+|                                                                   |        field_name = 'Операционные системы'                    |
+|                                                                   |        OR (field_name = 'Базы данных' AND semester = 7)       |
+|                                                                   |    )                                                          |
+|                                                                   |);                                                             |
+|                                                                   |END;                                                           |
 
 Профессор (update marks)
 
@@ -379,13 +432,13 @@ BEGIN;
             OR (field_name = 'Базы данных' AND semester = 7)
         )
     );
---COMMIT;
 ```
 
 Методист (before commit)
 
 ```sql
 -- Check marks
+BEGIN;
 SELECT mark
 FROM field_comprehensions
 WHERE 
@@ -433,6 +486,7 @@ AND field IN (
         OR (field_name = 'Базы данных' AND semester = 7)
     )
 );
+END;
 ```
 
 ||"mark"|
@@ -487,7 +541,6 @@ BEGIN;
             OR (field_name = 'Базы данных' AND semester = 7)
         )
     );
--- ROLLBACK;
 ```
 
 Output:
@@ -502,21 +555,22 @@ Query returned successfully in 61 msec.
 
 ```sql
 -- Check marks
-SELECT mark
-FROM field_comprehensions
-WHERE 
-student_id = (
-    SELECT student_id FROM students WHERE last_name = 'Шариков'
-    AND first_name = 'Полиграф'
-) 
-AND field IN (
-    SELECT field_id
-    FROM fields 
-    WHERE (
-        field_name = 'Операционные системы'
-        OR (field_name = 'Базы данных' AND semester = 7)
-    )
-);
+BEGIN;
+    SELECT mark
+    FROM field_comprehensions
+    WHERE 
+    student_id = (
+        SELECT student_id FROM students WHERE last_name = 'Шариков'
+        AND first_name = 'Полиграф'
+    ) 
+    AND field IN (
+        SELECT field_id
+        FROM fields 
+        WHERE (
+            field_name = 'Операционные системы'
+            OR (field_name = 'Базы данных' AND semester = 7)
+        )
+    );
 ```
 
 ||"mark"|
@@ -534,21 +588,22 @@ ROLLBACK;
 
 ```sql
 -- Check marks
-SELECT mark
-FROM field_comprehensions
-WHERE 
-student_id = (
-    SELECT student_id FROM students WHERE last_name = 'Шариков'
-    AND first_name = 'Полиграф'
-) 
-AND field IN (
-    SELECT field_id
-    FROM fields 
-    WHERE (
-        field_name = 'Операционные системы'
-        OR (field_name = 'Базы данных' AND semester = 7)
-    )
-);
+    SELECT mark
+    FROM field_comprehensions
+    WHERE 
+    student_id = (
+        SELECT student_id FROM students WHERE last_name = 'Шариков'
+        AND first_name = 'Полиграф'
+    ) 
+    AND field IN (
+        SELECT field_id
+        FROM fields 
+        WHERE (
+            field_name = 'Операционные системы'
+            OR (field_name = 'Базы данных' AND semester = 7)
+        )
+    );
+END;
 ```
 
 ||"mark"|
@@ -752,6 +807,36 @@ AND field IN (
 ## 3. Индексация БД
 
 Проанализируйте учебную базу данных и проиндексируйте одно из полей любой таблицы. Объясните свой выбор.
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM professors WHERE salary > 100000::money;
+```
+
+```sql
+"Seq Scan on professors  (cost=0.00..3.05 rows=21 width=114) (actual time=0.238..0.254 rows=21 loops=1)"
+"  Filter: (salary > (100000)::money)"
+"  Rows Removed by Filter: 49"
+"Planning Time: 0.817 ms"
+"Execution Time: 0.265 ms"
+```
+
+```sql
+CREATE INDEX idx_salary ON professors (salary);
+```
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM professors WHERE salary > 100000::money;
+```
+
+```sql
+"Seq Scan on professors  (cost=0.00..3.05 rows=21 width=114) (actual time=0.004..0.009 rows=21 loops=1)"
+"  Filter: (salary > (100000)::money)"
+"  Rows Removed by Filter: 49"
+"Planning Time: 0.132 ms"
+"Execution Time: 0.015 ms"
+```
 
 ## Контрольные вопросы
 
