@@ -21,8 +21,8 @@ CREATE TABLE departments (
     department_id SERIAL PRIMARY KEY,
     department_name VARCHAR(50) NOT NULL UNIQUE,
     head_id INT,
-    local_phone_number SMALLINT NOT NULL UNIQUE,
-    public_phone_number INT UNIQUE
+    local_phone_number VARCHAR(4) NOT NULL UNIQUE,
+    public_phone_number VARCHAR(11) UNIQUE
 );
 
 -- doctors table
@@ -51,7 +51,7 @@ CREATE TABLE rooms (
     room_number VARCHAR(10) NOT NULL UNIQUE,
     room_name VARCHAR NOT NULL,
     room_type ROOM_TYPE_ENUM NOT NULL,
-    number_of_beds SMALLINT,
+    number_of_beds SMALLINT DEFAULT NULL,
     CONSTRAINT chk_number_of_beds CHECK (
         (room_type = 'ward' AND number_of_beds IS NOT NULL AND number_of_beds > 0) OR
         (room_type != 'ward' AND number_of_beds IS NULL)
