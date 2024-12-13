@@ -92,9 +92,9 @@ ADD CONSTRAINT fkey_patient_id FOREIGN KEY (patient_id) REFERENCES patients(pati
 CREATE TABLE visits (
     visit_id SERIAL PRIMARY KEY,
     visit_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    discharge_date DATE NOT NULL DEFAULT CURRENT_DATE,
     patient_id INTEGER NOT NULL,
     doctor_id INTEGER NOT NULL,
-    diagnosis_id INT,
     FOREIGN KEY (patient_id) REFERENCES patients (patient_id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id) REFERENCES doctors (doctor_id) ON DELETE CASCADE
 );
@@ -179,3 +179,21 @@ CREATE TRIGGER set_number_of_beds_null_trig
 BEFORE INSERT OR UPDATE ON rooms
 FOR EACH ROW
 EXECUTE FUNCTION set_number_of_beds_null();
+
+-- check_room_capacity() Trigger Function
+CREATE OR REPLACE FUNCTION check_room_capacity()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id AND discharge_date IS NULL) >=
+       (SELECT number_of_beds FROM rooms WHERE room_id = NEW.room_id) THEN
+        RAISE EXCEPTION 'Room capacity exceeded';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- check_room_capacity_trig Trigger
+CREATE TRIGGER check_room_capacity_trig
+BEFORE INSERT ON visits_rooms
+FOR EACH ROW
+EXECUTE FUNCTION check_room_capacity();
