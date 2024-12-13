@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,598" last-zoom="0.8" max-obj-count="15"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="testuser"
+ inherit="true"
+ login="true"
+ password="********">
+</role>
+
+<role name="alexander"
+ superuser="true"
+ createdb="true"
+ createrole="true"
+ inherit="true"
+ login="true"
+ password="********">
+</role>
+
+<database name="hospital" encoding="UTF8" lc-collate="ru_RU.UTF-8" lc-ctype="ru_RU.UTF-8" is-template="false" allow-conns="true">
+	<role name="alexander"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<usertype name="room_type_enum" configuration="enumeration">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<enumeration label="service"/>
+	<enumeration label="ward"/>
+	<enumeration label="reception"/>
+	<enumeration label="procedural"/>
+	<enumeration label="examination"/>
+</usertype>
+
+<usertype name="gender_enum" configuration="enumeration">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<enumeration label="male"/>
+	<enumeration label="female"/>
+</usertype>
+
+<sequence name="departments_department_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="departments" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="200" y="280"/>
+	<column name="department_id" not-null="true" sequence="public.departments_department_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="department_name" not-null="true">
+		<type name="character varying" length="50"/>
+	</column>
+	<column name="head_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="local_phone_number" not-null="true">
+		<type name="character varying" length="4"/>
+	</column>
+	<column name="public_phone_number">
+		<type name="character varying" length="11"/>
+	</column>
+	<constraint name="departments_pkey" type="pk-constr" table="public.departments">
+		<columns names="department_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="departments_department_name_key" type="uq-constr" table="public.departments">
+		<columns names="department_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="departments_local_phone_number_key" type="uq-constr" table="public.departments">
+		<columns names="local_phone_number" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="departments_public_phone_number_key" type="uq-constr" table="public.departments">
+		<columns names="public_phone_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="doctors_doctor_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="doctors" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="240" y="680"/>
+	<column name="doctor_id" not-null="true" sequence="public.doctors_doctor_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="patronymic">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="position" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="department_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="is_doctor" not-null="true" default-value="false">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="doctors_pkey" type="pk-constr" table="public.doctors">
+		<columns names="doctor_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="rooms_room_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="rooms" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="760" y="260"/>
+	<column name="room_id" not-null="true" sequence="public.rooms_room_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="department_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="room_number" not-null="true">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="room_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="room_type" not-null="true">
+		<type name="public.room_type_enum" length="0"/>
+	</column>
+	<column name="number_of_beds">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="chk_number_of_beds" type="ck-constr" table="public.rooms">
+			<expression> <![CDATA[(((room_type = 'ward'::room_type_enum) AND (number_of_beds IS NOT NULL) AND (number_of_beds > 0)) OR ((room_type <> 'ward'::room_type_enum) AND (number_of_beds IS NULL)))]]> </expression>
+	</constraint>
+	<constraint name="rooms_pkey" type="pk-constr" table="public.rooms">
+		<columns names="room_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="rooms_room_number_key" type="uq-constr" table="public.rooms">
+		<columns names="room_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="patients_patient_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="patients" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="760" y="620"/>
+	<column name="patient_id" not-null="true" sequence="public.patients_patient_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="patronymic">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="birth_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="gender" not-null="true">
+		<type name="public.gender_enum" length="0"/>
+	</column>
+	<column name="phone_number">
+		<type name="character varying" length="11"/>
+	</column>
+	<column name="registration_date" not-null="true" default-value="CURRENT_DATE">
+		<type name="date" length="0"/>
+	</column>
+	<column name="age">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="patients_pkey" type="pk-constr" table="public.patients">
+		<columns names="patient_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="patients_phone_number_key" type="uq-constr" table="public.patients">
+		<columns names="phone_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="diagnoses_diagnosis_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="diagnoses" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="780" y="1360"/>
+	<column name="diagnosis_id" not-null="true" sequence="public.diagnoses_diagnosis_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="diagnosis_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="doctor_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="patient_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="diagnoses_pkey" type="pk-constr" table="public.diagnoses">
+		<columns names="diagnosis_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="diagnoses_patient_id_key" type="uq-constr" table="public.diagnoses">
+		<columns names="patient_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="visits_visit_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="visits" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="240" y="1160"/>
+	<column name="visit_id" not-null="true" sequence="public.visits_visit_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="visit_date" not-null="true" default-value="CURRENT_DATE">
+		<type name="date" length="0"/>
+	</column>
+	<column name="discharge_date" not-null="true" default-value="CURRENT_DATE">
+		<type name="date" length="0"/>
+	</column>
+	<column name="patient_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="doctor_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="visits_pkey" type="pk-constr" table="public.visits">
+		<columns names="visit_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="medications_medication_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="alexander"/>
+</sequence>
+
+<table name="medications" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1180" y="1600"/>
+	<column name="medication_id" not-null="true" sequence="public.medications_medication_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="medication_name" not-null="true">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="indications">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="form" not-null="true">
+		<type name="character varying" length="50"/>
+	</column>
+	<column name="production_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="expiration_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="amount">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="production_date_less_than_expiration_date" type="ck-constr" table="public.medications">
+			<expression> <![CDATA[(production_date < expiration_date)]]> </expression>
+	</constraint>
+	<constraint name="medications_pkey" type="pk-constr" table="public.medications">
+		<columns names="medication_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="treatment_courses" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1200" y="1180"/>
+	<column name="visit_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="medication_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="treatment_description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dosage_mg" not-null="true">
+		<type name="numeric" length="5" precision="2"/>
+	</column>
+	<column name="times_per_day" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="treatment_courses_pkey" type="pk-constr" table="public.treatment_courses">
+		<columns names="visit_id,medication_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="visits_diagnoses" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="200" y="1760"/>
+	<column name="visit_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="diagnosis_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="visits_diagnoses_pkey" type="pk-constr" table="public.visits_diagnoses">
+		<columns names="visit_id,diagnosis_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="visits_rooms" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1420" y="780"/>
+	<column name="visit_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="room_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="admission_date" not-null="true" default-value="CURRENT_DATE">
+		<type name="date" length="0"/>
+	</column>
+	<column name="discharge_date">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="visits_rooms_pkey" type="pk-constr" table="public.visits_rooms">
+		<columns names="visit_id,room_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<function name="calculate_age"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[BEGIN
+    NEW.age := DATE_PART('year', AGE(NEW.birth_date));
+    RETURN NEW;
+END;]]> </definition>
+</function>
+
+<trigger name="update_age_trig" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.patients">
+		<function signature="public.calculate_age()"/>
+</trigger>
+
+<function name="set_number_of_beds_null"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[BEGIN
+    IF NEW.room_type != 'ward' THEN
+        NEW.number_of_beds := NULL;
+    END IF;
+    RETURN NEW;
+END;]]> </definition>
+</function>
+
+<trigger name="set_number_of_beds_null_trig" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.rooms">
+		<function signature="public.set_number_of_beds_null()"/>
+</trigger>
+
+<function name="check_room_capacity"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[BEGIN
+    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id AND discharge_date IS NULL) >=
+       (SELECT number_of_beds FROM rooms WHERE room_id = NEW.room_id) THEN
+        RAISE EXCEPTION 'Room capacity exceeded';
+    END IF;
+    RETURN NEW;
+END;]]> </definition>
+</function>
+
+<trigger name="check_room_capacity_trig" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="public.visits_rooms">
+		<function signature="public.check_room_capacity()"/>
+</trigger>
+
+<index name="idx_patients_last_name" table="public.patients"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="last_name"/>
+		</idxelement>
+</index>
+
+<index name="idx_doctors_last_name" table="public.doctors"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="last_name"/>
+		</idxelement>
+</index>
+
+<index name="idx_doctors_doctor_id" table="public.doctors"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="last_name"/>
+		</idxelement>
+</index>
+
+<index name="idx_visits_patient_id" table="public.visits"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="patient_id"/>
+		</idxelement>
+</index>
+
+<index name="idx_visits_visit_date" table="public.visits"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="visit_date"/>
+		</idxelement>
+</index>
+
+<index name="idx_medications_medication_name" table="public.medications"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="medication_name"/>
+		</idxelement>
+</index>
+
+<index name="idx_medications_expiration_date" table="public.medications"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="expiration_date"/>
+		</idxelement>
+</index>
+
+<constraint name="fkey_head_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.doctors" table="public.departments">
+	<columns names="head_id" ref-type="src-columns"/>
+	<columns names="doctor_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fkey_department_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.departments" table="public.doctors">
+	<columns names="department_id" ref-type="src-columns"/>
+	<columns names="department_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fkey_department_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.departments" table="public.rooms">
+	<columns names="department_id" ref-type="src-columns"/>
+	<columns names="department_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fkey_doctor_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.doctors" table="public.diagnoses">
+	<columns names="doctor_id" ref-type="src-columns"/>
+	<columns names="doctor_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fkey_patient_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.patients" table="public.diagnoses">
+	<columns names="patient_id" ref-type="src-columns"/>
+	<columns names="patient_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_patient_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.patients" table="public.visits">
+	<columns names="patient_id" ref-type="src-columns"/>
+	<columns names="patient_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_doctor_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.doctors" table="public.visits">
+	<columns names="doctor_id" ref-type="src-columns"/>
+	<columns names="doctor_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="treatment_courses_visit_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.visits" table="public.treatment_courses">
+	<columns names="visit_id" ref-type="src-columns"/>
+	<columns names="visit_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="treatment_courses_medication_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.medications" table="public.treatment_courses">
+	<columns names="medication_id" ref-type="src-columns"/>
+	<columns names="medication_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_diagnoses_visit_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.visits" table="public.visits_diagnoses">
+	<columns names="visit_id" ref-type="src-columns"/>
+	<columns names="visit_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_diagnoses_diagnosis_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.diagnoses" table="public.visits_diagnoses">
+	<columns names="diagnosis_id" ref-type="src-columns"/>
+	<columns names="diagnosis_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_rooms_visit_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.visits" table="public.visits_rooms">
+	<columns names="visit_id" ref-type="src-columns"/>
+	<columns names="visit_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="visits_rooms_room_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.rooms" table="public.visits_rooms">
+	<columns names="room_id" ref-type="src-columns"/>
+	<columns names="room_id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_departments_doctors" type="relfk" layers="0"
+	 custom-color="#6311d2"
+	 src-table="public.departments"
+	 dst-table="public.doctors" reference-fk="fkey_head_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_doctors_departments" type="relfk" layers="0"
+	 custom-color="#059d0f"
+	 src-table="public.doctors"
+	 dst-table="public.departments" reference-fk="fkey_department_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_rooms_departments" type="relfk" layers="0"
+	 custom-color="#ad3466"
+	 src-table="public.rooms"
+	 dst-table="public.departments" reference-fk="fkey_department_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_diagnoses_doctors" type="relfk" layers="0"
+	 custom-color="#b49281"
+	 src-table="public.diagnoses"
+	 dst-table="public.doctors" reference-fk="fkey_doctor_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_diagnoses_patients" type="relfk" layers="0"
+	 custom-color="#e0a695"
+	 src-table="public.diagnoses"
+	 dst-table="public.patients" reference-fk="fkey_patient_id"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_patients" type="relfk" layers="0"
+	 custom-color="#e72a86"
+	 src-table="public.visits"
+	 dst-table="public.patients" reference-fk="visits_patient_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_doctors" type="relfk" layers="0"
+	 custom-color="#0094ba"
+	 src-table="public.visits"
+	 dst-table="public.doctors" reference-fk="visits_doctor_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_treatment_courses_visits" type="relfk" layers="0"
+	 custom-color="#d5b358"
+	 src-table="public.treatment_courses"
+	 dst-table="public.visits" reference-fk="treatment_courses_visit_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_treatment_courses_medications" type="relfk" layers="0"
+	 custom-color="#ad71ef"
+	 src-table="public.treatment_courses"
+	 dst-table="public.medications" reference-fk="treatment_courses_medication_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_diagnoses_visits" type="relfk" layers="0"
+	 custom-color="#852183"
+	 src-table="public.visits_diagnoses"
+	 dst-table="public.visits" reference-fk="visits_diagnoses_visit_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_diagnoses_diagnoses" type="relfk" layers="0"
+	 custom-color="#4fc48e"
+	 src-table="public.visits_diagnoses"
+	 dst-table="public.diagnoses" reference-fk="visits_diagnoses_diagnosis_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_rooms_visits" type="relfk" layers="0"
+	 custom-color="#366ca9"
+	 src-table="public.visits_rooms"
+	 dst-table="public.visits" reference-fk="visits_rooms_visit_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_visits_rooms_rooms" type="relfk" layers="0"
+	 custom-color="#8b7deb"
+	 src-table="public.visits_rooms"
+	 dst-table="public.rooms" reference-fk="visits_rooms_room_id_fkey"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>
