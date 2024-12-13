@@ -126,3 +126,31 @@
 |   room_id      |
 |admission_date  |
 |discharge_date  |
+
+## Работа с мейкфайлом
+
+Для создания таблиц, триггеров, индексации, процедур
+
+```bash
+make create
+```
+
+Для заполнения таблиц готовыми предопределенными значениями
+
+```bash
+make fill_tables
+```
+
+Для запуска n-го запроса
+
+```bash
+make query NUM=01
+make query NUM=03
+make query NUM=15
+```
+
+Для запуска 20 первых запросов
+
+```bash
+make
+```
