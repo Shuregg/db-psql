@@ -7,7 +7,7 @@ DUMP_NAME = dump_$(DB_NAME)$(POSTFIX)
 
 all:
 	clear;
-	@for NUM in $(shell seq -w 1 20); do \
+	@for NUM in $(shell seq -w 01 10); do \
 		$(MAKE) query NUM=$$NUM; \
 	done
 
@@ -23,7 +23,11 @@ create_indexes:
 create_procedures:
 	psql -U ${USER} -d $(DB_NAME) -a -f scripts/create_procedures.sql
 
-create: create_db create_tables create_indexes create_procedures
+create_views:
+	psql -U ${USER} -d $(DB_NAME) -a -f scripts/create_views.sql
+
+create: create_db create_tables create_indexes create_procedures create_views
+	echo "Full DB sctructire has been created!"
 
 fill_tables:
 	psql -U ${USER} -d $(DB_NAME) -a -f scripts/fill_tables.sql
