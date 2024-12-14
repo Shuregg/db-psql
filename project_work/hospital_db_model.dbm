@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,598" last-zoom="0.8" max-obj-count="15"
+<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,0" last-zoom="0.5" max-obj-count="40"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -58,7 +58,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="departments" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="200" y="280"/>
+	<position x="560" y="360"/>
 	<column name="department_id" not-null="true" sequence="public.departments_department_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -96,7 +96,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="doctors" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="240" y="680"/>
+	<position x="560" y="800"/>
 	<column name="doctor_id" not-null="true" sequence="public.doctors_doctor_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -109,7 +109,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="patronymic">
 		<type name="character varying" length="0"/>
 	</column>
-	<column name="position" not-null="true">
+	<column name="current_position" not-null="true">
 		<type name="character varying" length="0"/>
 	</column>
 	<column name="department_id">
@@ -131,7 +131,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="rooms" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="760" y="260"/>
+	<position x="1200" y="340"/>
 	<column name="room_id" not-null="true" sequence="public.rooms_room_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -169,7 +169,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="patients" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="760" y="620"/>
+	<position x="1660" y="700"/>
 	<column name="patient_id" not-null="true" sequence="public.patients_patient_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -213,7 +213,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="diagnoses" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="780" y="1360"/>
+	<position x="1060" y="1320"/>
 	<column name="diagnosis_id" not-null="true" sequence="public.diagnoses_diagnosis_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -242,7 +242,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="visits" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="240" y="1160"/>
+	<position x="580" y="1180"/>
 	<column name="visit_id" not-null="true" sequence="public.visits_visit_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -271,7 +271,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="medications" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="1180" y="1600"/>
+	<position x="1640" y="1100"/>
 	<column name="medication_id" not-null="true" sequence="public.medications_medication_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -307,7 +307,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="treatment_courses" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="1200" y="1180"/>
+	<position x="2520" y="1140"/>
 	<column name="visit_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
@@ -331,7 +331,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="visits_diagnoses" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="200" y="1760"/>
+	<position x="540" y="1600"/>
 	<column name="visit_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
@@ -343,21 +343,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="visits_rooms" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="visits_rooms" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="alexander"/>
-	<position x="1420" y="780"/>
+	<position x="2440" y="400"/>
 	<column name="visit_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="room_id" not-null="true">
 		<type name="integer" length="0"/>
-	</column>
-	<column name="admission_date" not-null="true" default-value="CURRENT_DATE">
-		<type name="date" length="0"/>
-	</column>
-	<column name="discharge_date">
-		<type name="date" length="0"/>
 	</column>
 	<constraint name="visits_rooms_pkey" type="pk-constr" table="public.visits_rooms">
 		<columns names="visit_id,room_id" ref-type="src-columns"/>
@@ -436,7 +430,7 @@ END;]]> </definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition> <![CDATA[BEGIN
-    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id AND discharge_date IS NULL) >=
+    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id) >=
        (SELECT number_of_beds FROM rooms WHERE room_id = NEW.room_id) THEN
         RAISE EXCEPTION 'Room capacity exceeded';
     END IF;
@@ -455,6 +449,14 @@ END;]]> </definition>
 	 index-type="btree" factor="90">
 		<idxelement use-sorting="false">
 			<column name="last_name"/>
+		</idxelement>
+</index>
+
+<index name="idx_patients_patient_id" table="public.patients"
+	 concurrent="false" unique="false" fast-update="false" buffering="false" nulls-not-distinct="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="patient_id"/>
 		</idxelement>
 </index>
 
@@ -505,6 +507,442 @@ END;]]> </definition>
 			<column name="expiration_date"/>
 		</idxelement>
 </index>
+
+<procedure name="add_patient" security-type="SECURITY INVOKER">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<parameter name="first_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="last_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="patronymic">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="birth_date">
+		<type name="date" length="0"/>
+	</parameter>
+	<parameter name="gender">
+		<type name="public.gender_enum" length="0"/>
+	</parameter>
+	<parameter name="phone_number">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<definition> <![CDATA[BEGIN
+    INSERT INTO patients (first_name, last_name, patronymic, birth_date, gender, phone_number)
+    VALUES (first_name, last_name, patronymic, birth_date, gender, phone_number);
+END;]]> </definition>
+</procedure>
+
+<procedure name="add_doctor" security-type="SECURITY INVOKER">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<parameter name="first_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="last_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="patronymic">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="current_position">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="department_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<parameter name="is_doctor">
+		<type name="boolean" length="0"/>
+	</parameter>
+	<definition> <![CDATA[BEGIN
+    INSERT INTO doctors (first_name, last_name, patronymic, current_position, department_id, is_doctor)
+    VALUES (first_name, last_name, patronymic, current_position, department_id, is_doctor);
+END;]]> </definition>
+</procedure>
+
+<procedure name="add_diagnosis" security-type="SECURITY INVOKER">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<parameter name="diagnosis_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="doctor_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<parameter name="patient_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<definition> <![CDATA[BEGIN
+    INSERT INTO diagnoses (diagnosis_name, doctor_id, patient_id)
+    VALUES (diagnosis_name, doctor_id, patient_id);
+END;]]> </definition>
+</procedure>
+
+<procedure name="add_visit" security-type="SECURITY INVOKER">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<parameter name="visit_date">
+		<type name="date" length="0"/>
+	</parameter>
+	<parameter name="discharge_date">
+		<type name="date" length="0"/>
+	</parameter>
+	<parameter name="patient_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<parameter name="doctor_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<definition> <![CDATA[BEGIN
+    INSERT INTO visits (visit_date, discharge_date, patient_id, doctor_id)
+    VALUES (visit_date, discharge_date, patient_id, doctor_id);
+END;]]> </definition>
+</procedure>
+
+<procedure name="add_medication" security-type="SECURITY INVOKER">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<language name="plpgsql"/>
+	<parameter name="medication_name">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="indications">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="form">
+		<type name="character varying" length="0"/>
+	</parameter>
+	<parameter name="production_date">
+		<type name="date" length="0"/>
+	</parameter>
+	<parameter name="expiration_date">
+		<type name="date" length="0"/>
+	</parameter>
+	<parameter name="price">
+		<type name="numeric" length="0"/>
+	</parameter>
+	<parameter name="amount">
+		<type name="integer" length="0"/>
+	</parameter>
+	<definition> <![CDATA[BEGIN
+    INSERT INTO medications (medication_name, indications, form, production_date, expiration_date, price, amount)
+    VALUES (medication_name, indications, form, production_date, expiration_date, price, amount);
+END;]]> </definition>
+</procedure>
+
+<view name="patients_age_view" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="2120" y="820"/>
+	<reference object="public.patients" type="table" ref-name="patients" use-signature="true"/>
+	<simplecol name="first_name" type="character varying"/>
+	<simplecol name="last_name" type="character varying"/>
+	<simplecol name="birth_date" type="date"/>
+	<simplecol name="age" type="numeric"/>
+	<definition> <![CDATA[ SELECT first_name,
+    last_name,
+    birth_date,
+    EXTRACT(year FROM age((birth_date)::timestamp with time zone)) AS age
+   FROM patients p;]]> </definition>
+</view>
+
+<relationship name="rel_patients_age_view_patients" type="reltv" layers="0"
+	 custom-color="#359de1"
+	 src-table="public.patients_age_view"
+	 dst-table="public.patients"
+	 src-required="false" dst-required="false"/>
+
+<view name="doctors_patients_sorted_view" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1080" y="760"/>
+	<reference object="public.doctors" type="table" ref-name="doctors" use-signature="true"/>
+	<reference object="public.patients" type="table" ref-name="patients" use-signature="true"/>
+	<reference object="public.visits" type="table" ref-name="visits" use-signature="true"/>
+	<simplecol name="doctor_first_name" type="character varying"/>
+	<simplecol name="doctor_last_name" type="character varying"/>
+	<simplecol name="patient_first_name" type="character varying"/>
+	<simplecol name="patient_last_name" type="character varying"/>
+	<simplecol name="visit_date" type="date"/>
+	<definition> <![CDATA[ SELECT d.first_name AS doctor_first_name,
+    d.last_name AS doctor_last_name,
+    p.first_name AS patient_first_name,
+    p.last_name AS patient_last_name,
+    v.visit_date
+   FROM ((doctors d
+     JOIN visits v ON ((d.doctor_id = v.doctor_id)))
+     JOIN patients p ON ((v.patient_id = p.patient_id)))
+  ORDER BY v.visit_date;]]> </definition>
+</view>
+
+<relationship name="rel_doctors_patients_sorted_view_doctors" type="reltv" layers="0"
+	 custom-color="#e52b15"
+	 src-table="public.doctors_patients_sorted_view"
+	 dst-table="public.doctors"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_doctors_patients_sorted_view_patients" type="reltv" layers="0"
+	 custom-color="#33019d"
+	 src-table="public.doctors_patients_sorted_view"
+	 dst-table="public.patients"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_doctors_patients_sorted_view_visits" type="reltv" layers="0"
+	 custom-color="#6a7915"
+	 src-table="public.doctors_patients_sorted_view"
+	 dst-table="public.visits"
+	 src-required="false" dst-required="false"/>
+
+<view name="rooms_beds_view" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1220" y="80"/>
+	<reference object="public.rooms" type="table" ref-name="rooms" use-signature="true"/>
+	<simplecol name="room_id" type="integer"/>
+	<simplecol name="room_number" type="character varying(10)"/>
+	<simplecol name="room_name" type="character varying"/>
+	<simplecol name="room_type" type="public.room_type_enum"/>
+	<simplecol name="number_of_beds" type="smallint"/>
+	<definition> <![CDATA[ SELECT room_id,
+    room_number,
+    room_name,
+    room_type,
+    number_of_beds
+   FROM rooms r
+  WHERE (room_type = 'ward'::room_type_enum);]]> </definition>
+</view>
+
+<relationship name="rel_rooms_beds_view_rooms" type="reltv" layers="0"
+	 custom-color="#72bb2c"
+	 src-table="public.rooms_beds_view"
+	 dst-table="public.rooms"
+	 src-required="false" dst-required="false"/>
+
+<view name="expiring_medications_view" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="2120" y="1100"/>
+	<reference object="public.medications" type="table" ref-name="medications" use-signature="true"/>
+	<simplecol name="medication_name" type="character varying"/>
+	<simplecol name="expiration_date" type="date"/>
+	<definition> <![CDATA[ SELECT medication_name,
+    expiration_date
+   FROM medications m
+  WHERE (expiration_date < (CURRENT_DATE + '1 mon'::interval));]]> </definition>
+</view>
+
+<relationship name="rel_expiring_medications_view_medications" type="reltv" layers="0"
+	 custom-color="#1ef2b4"
+	 src-table="public.expiring_medications_view"
+	 dst-table="public.medications"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="141.529" y="-9.93798"/>
+	</label>
+</relationship>
+
+<view name="patients_in_ward_rooms_view" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1700" y="540"/>
+	<reference object="public.rooms" type="table" ref-name="rooms" use-signature="true"/>
+	<reference object="public.patients" type="table" ref-name="patients" use-signature="true"/>
+	<reference object="public.visits_rooms" type="table" ref-name="visits_rooms" use-signature="true"/>
+	<simplecol name="first_name" type="character varying"/>
+	<simplecol name="last_name" type="character varying"/>
+	<simplecol name="room_number" type="character varying(10)"/>
+	<definition> <![CDATA[ SELECT p.first_name,
+    p.last_name,
+    r.room_number
+   FROM ((patients p
+     JOIN visits_rooms vr ON ((p.patient_id = vr.visit_id)))
+     JOIN rooms r ON ((vr.room_id = r.room_id)))
+  WHERE (r.room_type = 'ward'::room_type_enum);]]> </definition>
+</view>
+
+<relationship name="rel_patients_in_ward_rooms_view_patients" type="reltv" layers="0"
+	 custom-color="#f387e7"
+	 src-table="public.patients_in_ward_rooms_view"
+	 dst-table="public.patients"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_patients_in_ward_rooms_view_rooms" type="reltv" layers="0"
+	 custom-color="#4708f5"
+	 src-table="public.patients_in_ward_rooms_view"
+	 dst-table="public.rooms"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_patients_in_ward_rooms_view_visits_rooms" type="reltv" layers="0"
+	 custom-color="#d420f5"
+	 src-table="public.patients_in_ward_rooms_view"
+	 dst-table="public.visits_rooms"
+	 src-required="false" dst-required="false"/>
+
+<view name="doctor_patient_count_view" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="160" y="1080"/>
+	<reference object="public.doctors" type="table" ref-name="doctors" use-signature="true"/>
+	<reference object="public.visits" type="table" ref-name="visits" use-signature="true"/>
+	<simplecol name="first_name" type="character varying"/>
+	<simplecol name="last_name" type="character varying"/>
+	<simplecol name="patient_count" type="bigint"/>
+	<definition> <![CDATA[ SELECT d.first_name,
+    d.last_name,
+    count(v.patient_id) AS patient_count
+   FROM (doctors d
+     JOIN visits v ON ((d.doctor_id = v.doctor_id)))
+  GROUP BY d.doctor_id;]]> </definition>
+</view>
+
+<relationship name="rel_doctor_patient_count_view_doctors" type="reltv" layers="0"
+	 custom-color="#e5a966"
+	 src-table="public.doctor_patient_count_view"
+	 dst-table="public.doctors"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_doctor_patient_count_view_visits" type="reltv" layers="0"
+	 custom-color="#cccd72"
+	 src-table="public.doctor_patient_count_view"
+	 dst-table="public.visits"
+	 src-required="false" dst-required="false"/>
+
+<view name="diagnosis_patient_count_view" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1700" y="1740"/>
+	<reference object="public.patients" type="table" ref-name="patients" use-signature="true"/>
+	<reference object="public.diagnoses" type="table" ref-name="diagnoses" use-signature="true"/>
+	<simplecol name="diagnosis_name" type="character varying"/>
+	<simplecol name="patient_count" type="bigint"/>
+	<definition> <![CDATA[ SELECT d.diagnosis_name,
+    count(p.patient_id) AS patient_count
+   FROM (diagnoses d
+     JOIN patients p ON ((d.patient_id = p.patient_id)))
+  GROUP BY d.diagnosis_id;]]> </definition>
+</view>
+
+<relationship name="rel_diagnosis_patient_count_view_patients" type="reltv" layers="0"
+	 custom-color="#29b685"
+	 src-table="public.diagnosis_patient_count_view"
+	 dst-table="public.patients"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="7.2806" y="57.462"/>
+	</label>
+</relationship>
+
+<relationship name="rel_diagnosis_patient_count_view_diagnoses" type="reltv" layers="0"
+	 custom-color="#62fb4a"
+	 src-table="public.diagnosis_patient_count_view"
+	 dst-table="public.diagnoses"
+	 src-required="false" dst-required="false"/>
+
+<view name="room_patient_count_view" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1940" y="300"/>
+	<reference object="public.rooms" type="table" ref-name="rooms" use-signature="true"/>
+	<reference object="public.visits_rooms" type="table" ref-name="visits_rooms" use-signature="true"/>
+	<simplecol name="room_number" type="character varying(10)"/>
+	<simplecol name="patient_count" type="bigint"/>
+	<definition> <![CDATA[ SELECT r.room_number,
+    count(vr.visit_id) AS patient_count
+   FROM (rooms r
+     JOIN visits_rooms vr ON ((r.room_id = vr.room_id)))
+  GROUP BY r.room_id;]]> </definition>
+</view>
+
+<relationship name="rel_room_patient_count_view_rooms" type="reltv" layers="0"
+	 custom-color="#cbdcff"
+	 src-table="public.room_patient_count_view"
+	 dst-table="public.rooms"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_room_patient_count_view_visits_rooms" type="reltv" layers="0"
+	 custom-color="#251a82"
+	 src-table="public.room_patient_count_view"
+	 dst-table="public.visits_rooms"
+	 src-required="false" dst-required="false"/>
+
+<view name="medication_treatment_count_view" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="2180" y="1620"/>
+	<reference object="public.medications" type="table" ref-name="medications" use-signature="true"/>
+	<reference object="public.treatment_courses" type="table" ref-name="treatment_courses" use-signature="true"/>
+	<simplecol name="medication_name" type="character varying"/>
+	<simplecol name="treatment_count" type="bigint"/>
+	<definition> <![CDATA[ SELECT m.medication_name,
+    count(tc.visit_id) AS treatment_count
+   FROM (medications m
+     JOIN treatment_courses tc ON ((m.medication_id = tc.medication_id)))
+  GROUP BY m.medication_id;]]> </definition>
+</view>
+
+<relationship name="rel_medication_treatment_count_view_medications" type="reltv" layers="0"
+	 custom-color="#633f0a"
+	 src-table="public.medication_treatment_count_view"
+	 dst-table="public.medications"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_medication_treatment_count_view_treatment_courses" type="reltv" layers="0"
+	 custom-color="#fbd833"
+	 src-table="public.medication_treatment_count_view"
+	 dst-table="public.treatment_courses"
+	 src-required="false" dst-required="false"/>
+
+<view name="patients_rooms_diagnoses_view" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="alexander"/>
+	<position x="1200" y="2040"/>
+	<reference object="public.rooms" type="table" ref-name="rooms" use-signature="true"/>
+	<reference object="public.patients" type="table" ref-name="patients" use-signature="true"/>
+	<reference object="public.diagnoses" type="table" ref-name="diagnoses" use-signature="true"/>
+	<reference object="public.visits_rooms" type="table" ref-name="visits_rooms" use-signature="true"/>
+	<simplecol name="first_name" type="character varying"/>
+	<simplecol name="last_name" type="character varying"/>
+	<simplecol name="room_number" type="character varying(10)"/>
+	<simplecol name="diagnosis_name" type="character varying"/>
+	<definition> <![CDATA[ SELECT p.first_name,
+    p.last_name,
+    r.room_number,
+    d.diagnosis_name
+   FROM (((patients p
+     JOIN visits_rooms vr ON ((p.patient_id = vr.visit_id)))
+     JOIN rooms r ON ((vr.room_id = r.room_id)))
+     JOIN diagnoses d ON ((p.patient_id = d.patient_id)));]]> </definition>
+</view>
+
+<relationship name="rel_patients_rooms_diagnoses_view_patients" type="reltv" layers="0"
+	 custom-color="#d087fa"
+	 src-table="public.patients_rooms_diagnoses_view"
+	 dst-table="public.patients"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_patients_rooms_diagnoses_view_rooms" type="reltv" layers="0"
+	 custom-color="#2fb3b5"
+	 src-table="public.patients_rooms_diagnoses_view"
+	 dst-table="public.rooms"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_patients_rooms_diagnoses_view_diagnoses" type="reltv" layers="0"
+	 custom-color="#8e3490"
+	 src-table="public.patients_rooms_diagnoses_view"
+	 dst-table="public.diagnoses"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_patients_rooms_diagnoses_view_visits_rooms" type="reltv" layers="0"
+	 custom-color="#ad4dc1"
+	 src-table="public.patients_rooms_diagnoses_view"
+	 dst-table="public.visits_rooms"
+	 src-required="false" dst-required="false"/>
 
 <constraint name="fkey_head_id" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.doctors" table="public.departments">
@@ -585,79 +1023,79 @@ END;]]> </definition>
 </constraint>
 
 <relationship name="rel_departments_doctors" type="relfk" layers="0"
-	 custom-color="#6311d2"
+	 custom-color="#a468f9"
 	 src-table="public.departments"
 	 dst-table="public.doctors" reference-fk="fkey_head_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_doctors_departments" type="relfk" layers="0"
-	 custom-color="#059d0f"
+	 custom-color="#4f0d1b"
 	 src-table="public.doctors"
 	 dst-table="public.departments" reference-fk="fkey_department_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_rooms_departments" type="relfk" layers="0"
-	 custom-color="#ad3466"
+	 custom-color="#a9812c"
 	 src-table="public.rooms"
 	 dst-table="public.departments" reference-fk="fkey_department_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_diagnoses_doctors" type="relfk" layers="0"
-	 custom-color="#b49281"
+	 custom-color="#cf606b"
 	 src-table="public.diagnoses"
 	 dst-table="public.doctors" reference-fk="fkey_doctor_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_diagnoses_patients" type="relfk" layers="0"
-	 custom-color="#e0a695"
+	 custom-color="#2e60df"
 	 src-table="public.diagnoses"
 	 dst-table="public.patients" reference-fk="fkey_patient_id"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_patients" type="relfk" layers="0"
-	 custom-color="#e72a86"
+	 custom-color="#ddc3d0"
 	 src-table="public.visits"
 	 dst-table="public.patients" reference-fk="visits_patient_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_doctors" type="relfk" layers="0"
-	 custom-color="#0094ba"
+	 custom-color="#2d4312"
 	 src-table="public.visits"
 	 dst-table="public.doctors" reference-fk="visits_doctor_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_treatment_courses_visits" type="relfk" layers="0"
-	 custom-color="#d5b358"
+	 custom-color="#6a5ee5"
 	 src-table="public.treatment_courses"
 	 dst-table="public.visits" reference-fk="treatment_courses_visit_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_treatment_courses_medications" type="relfk" layers="0"
-	 custom-color="#ad71ef"
+	 custom-color="#9a818b"
 	 src-table="public.treatment_courses"
 	 dst-table="public.medications" reference-fk="treatment_courses_medication_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_diagnoses_visits" type="relfk" layers="0"
-	 custom-color="#852183"
+	 custom-color="#1ad95a"
 	 src-table="public.visits_diagnoses"
 	 dst-table="public.visits" reference-fk="visits_diagnoses_visit_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_diagnoses_diagnoses" type="relfk" layers="0"
-	 custom-color="#4fc48e"
+	 custom-color="#555354"
 	 src-table="public.visits_diagnoses"
 	 dst-table="public.diagnoses" reference-fk="visits_diagnoses_diagnosis_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_rooms_visits" type="relfk" layers="0"
-	 custom-color="#366ca9"
+	 custom-color="#101204"
 	 src-table="public.visits_rooms"
 	 dst-table="public.visits" reference-fk="visits_rooms_visit_id_fkey"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_visits_rooms_rooms" type="relfk" layers="0"
-	 custom-color="#8b7deb"
+	 custom-color="#d5f43d"
 	 src-table="public.visits_rooms"
 	 dst-table="public.rooms" reference-fk="visits_rooms_room_id_fkey"
 	 src-required="false" dst-required="true"/>

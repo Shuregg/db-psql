@@ -44,6 +44,86 @@ CREATE TYPE public.room_type_enum AS ENUM (
 ALTER TYPE public.room_type_enum OWNER TO alexander;
 
 --
+-- Name: add_diagnosis(character varying, integer, integer); Type: PROCEDURE; Schema: public; Owner: alexander
+--
+
+CREATE PROCEDURE public.add_diagnosis(IN diagnosis_name character varying, IN doctor_id integer, IN patient_id integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO diagnoses (diagnosis_name, doctor_id, patient_id)
+    VALUES (diagnosis_name, doctor_id, patient_id);
+END;
+$$;
+
+
+ALTER PROCEDURE public.add_diagnosis(IN diagnosis_name character varying, IN doctor_id integer, IN patient_id integer) OWNER TO alexander;
+
+--
+-- Name: add_doctor(character varying, character varying, character varying, character varying, integer, boolean); Type: PROCEDURE; Schema: public; Owner: alexander
+--
+
+CREATE PROCEDURE public.add_doctor(IN first_name character varying, IN last_name character varying, IN patronymic character varying, IN current_position character varying, IN department_id integer, IN is_doctor boolean)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO doctors (first_name, last_name, patronymic, current_position, department_id, is_doctor)
+    VALUES (first_name, last_name, patronymic, current_position, department_id, is_doctor);
+END;
+$$;
+
+
+ALTER PROCEDURE public.add_doctor(IN first_name character varying, IN last_name character varying, IN patronymic character varying, IN current_position character varying, IN department_id integer, IN is_doctor boolean) OWNER TO alexander;
+
+--
+-- Name: add_medication(character varying, character varying, character varying, date, date, numeric, integer); Type: PROCEDURE; Schema: public; Owner: alexander
+--
+
+CREATE PROCEDURE public.add_medication(IN medication_name character varying, IN indications character varying, IN form character varying, IN production_date date, IN expiration_date date, IN price numeric, IN amount integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO medications (medication_name, indications, form, production_date, expiration_date, price, amount)
+    VALUES (medication_name, indications, form, production_date, expiration_date, price, amount);
+END;
+$$;
+
+
+ALTER PROCEDURE public.add_medication(IN medication_name character varying, IN indications character varying, IN form character varying, IN production_date date, IN expiration_date date, IN price numeric, IN amount integer) OWNER TO alexander;
+
+--
+-- Name: add_patient(character varying, character varying, character varying, date, public.gender_enum, character varying); Type: PROCEDURE; Schema: public; Owner: alexander
+--
+
+CREATE PROCEDURE public.add_patient(IN first_name character varying, IN last_name character varying, IN patronymic character varying, IN birth_date date, IN gender public.gender_enum, IN phone_number character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO patients (first_name, last_name, patronymic, birth_date, gender, phone_number)
+    VALUES (first_name, last_name, patronymic, birth_date, gender, phone_number);
+END;
+$$;
+
+
+ALTER PROCEDURE public.add_patient(IN first_name character varying, IN last_name character varying, IN patronymic character varying, IN birth_date date, IN gender public.gender_enum, IN phone_number character varying) OWNER TO alexander;
+
+--
+-- Name: add_visit(date, date, integer, integer); Type: PROCEDURE; Schema: public; Owner: alexander
+--
+
+CREATE PROCEDURE public.add_visit(IN visit_date date, IN discharge_date date, IN patient_id integer, IN doctor_id integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO visits (visit_date, discharge_date, patient_id, doctor_id)
+    VALUES (visit_date, discharge_date, patient_id, doctor_id);
+END;
+$$;
+
+
+ALTER PROCEDURE public.add_visit(IN visit_date date, IN discharge_date date, IN patient_id integer, IN doctor_id integer) OWNER TO alexander;
+
+--
 -- Name: calculate_age(); Type: FUNCTION; Schema: public; Owner: alexander
 --
 
@@ -67,7 +147,7 @@ CREATE FUNCTION public.check_room_capacity() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id AND discharge_date IS NULL) >=
+    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id) >=
        (SELECT number_of_beds FROM rooms WHERE room_id = NEW.room_id) THEN
         RAISE EXCEPTION 'Room capacity exceeded';
     END IF;
@@ -174,6 +254,31 @@ ALTER SEQUENCE public.diagnoses_diagnosis_id_seq OWNED BY public.diagnoses.diagn
 
 
 --
+-- Name: diagnosis_patient_count_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.diagnosis_patient_count_view AS
+SELECT
+    NULL::character varying AS diagnosis_name,
+    NULL::bigint AS patient_count;
+
+
+ALTER VIEW public.diagnosis_patient_count_view OWNER TO alexander;
+
+--
+-- Name: doctor_patient_count_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.doctor_patient_count_view AS
+SELECT
+    NULL::character varying AS first_name,
+    NULL::character varying AS last_name,
+    NULL::bigint AS patient_count;
+
+
+ALTER VIEW public.doctor_patient_count_view OWNER TO alexander;
+
+--
 -- Name: doctors; Type: TABLE; Schema: public; Owner: alexander
 --
 
@@ -182,7 +287,7 @@ CREATE TABLE public.doctors (
     first_name character varying NOT NULL,
     last_name character varying NOT NULL,
     patronymic character varying,
-    "position" character varying NOT NULL,
+    current_position character varying NOT NULL,
     department_id integer,
     is_doctor boolean DEFAULT false NOT NULL
 );
@@ -213,6 +318,58 @@ ALTER SEQUENCE public.doctors_doctor_id_seq OWNED BY public.doctors.doctor_id;
 
 
 --
+-- Name: patients; Type: TABLE; Schema: public; Owner: alexander
+--
+
+CREATE TABLE public.patients (
+    patient_id integer NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    patronymic character varying,
+    birth_date date NOT NULL,
+    gender public.gender_enum NOT NULL,
+    phone_number character varying(11),
+    registration_date date DEFAULT CURRENT_DATE NOT NULL,
+    age integer
+);
+
+
+ALTER TABLE public.patients OWNER TO alexander;
+
+--
+-- Name: visits; Type: TABLE; Schema: public; Owner: alexander
+--
+
+CREATE TABLE public.visits (
+    visit_id integer NOT NULL,
+    visit_date date DEFAULT CURRENT_DATE NOT NULL,
+    discharge_date date DEFAULT CURRENT_DATE NOT NULL,
+    patient_id integer NOT NULL,
+    doctor_id integer NOT NULL
+);
+
+
+ALTER TABLE public.visits OWNER TO alexander;
+
+--
+-- Name: doctors_patients_sorted_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.doctors_patients_sorted_view AS
+ SELECT d.first_name AS doctor_first_name,
+    d.last_name AS doctor_last_name,
+    p.first_name AS patient_first_name,
+    p.last_name AS patient_last_name,
+    v.visit_date
+   FROM ((public.doctors d
+     JOIN public.visits v ON ((d.doctor_id = v.doctor_id)))
+     JOIN public.patients p ON ((v.patient_id = p.patient_id)))
+  ORDER BY v.visit_date;
+
+
+ALTER VIEW public.doctors_patients_sorted_view OWNER TO alexander;
+
+--
 -- Name: medications; Type: TABLE; Schema: public; Owner: alexander
 --
 
@@ -230,6 +387,31 @@ CREATE TABLE public.medications (
 
 
 ALTER TABLE public.medications OWNER TO alexander;
+
+--
+-- Name: expiring_medications_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.expiring_medications_view AS
+ SELECT medication_name,
+    expiration_date
+   FROM public.medications m
+  WHERE (expiration_date < (CURRENT_DATE + '1 mon'::interval));
+
+
+ALTER VIEW public.expiring_medications_view OWNER TO alexander;
+
+--
+-- Name: medication_treatment_count_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.medication_treatment_count_view AS
+SELECT
+    NULL::character varying AS medication_name,
+    NULL::bigint AS treatment_count;
+
+
+ALTER VIEW public.medication_treatment_count_view OWNER TO alexander;
 
 --
 -- Name: medications_medication_id_seq; Type: SEQUENCE; Schema: public; Owner: alexander
@@ -254,23 +436,63 @@ ALTER SEQUENCE public.medications_medication_id_seq OWNED BY public.medications.
 
 
 --
--- Name: patients; Type: TABLE; Schema: public; Owner: alexander
+-- Name: patients_age_view; Type: VIEW; Schema: public; Owner: alexander
 --
 
-CREATE TABLE public.patients (
-    patient_id integer NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    patronymic character varying,
-    birth_date date NOT NULL,
-    gender public.gender_enum NOT NULL,
-    phone_number character varying(11),
-    registration_date date DEFAULT CURRENT_DATE NOT NULL,
-    age integer
+CREATE VIEW public.patients_age_view AS
+ SELECT first_name,
+    last_name,
+    birth_date,
+    EXTRACT(year FROM age((birth_date)::timestamp with time zone)) AS age
+   FROM public.patients p;
+
+
+ALTER VIEW public.patients_age_view OWNER TO alexander;
+
+--
+-- Name: rooms; Type: TABLE; Schema: public; Owner: alexander
+--
+
+CREATE TABLE public.rooms (
+    room_id integer NOT NULL,
+    department_id integer,
+    room_number character varying(10) NOT NULL,
+    room_name character varying NOT NULL,
+    room_type public.room_type_enum NOT NULL,
+    number_of_beds smallint,
+    CONSTRAINT chk_number_of_beds CHECK ((((room_type = 'ward'::public.room_type_enum) AND (number_of_beds IS NOT NULL) AND (number_of_beds > 0)) OR ((room_type <> 'ward'::public.room_type_enum) AND (number_of_beds IS NULL))))
 );
 
 
-ALTER TABLE public.patients OWNER TO alexander;
+ALTER TABLE public.rooms OWNER TO alexander;
+
+--
+-- Name: visits_rooms; Type: TABLE; Schema: public; Owner: alexander
+--
+
+CREATE TABLE public.visits_rooms (
+    visit_id integer NOT NULL,
+    room_id integer NOT NULL
+);
+
+
+ALTER TABLE public.visits_rooms OWNER TO alexander;
+
+--
+-- Name: patients_in_ward_rooms_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.patients_in_ward_rooms_view AS
+ SELECT p.first_name,
+    p.last_name,
+    r.room_number
+   FROM ((public.patients p
+     JOIN public.visits_rooms vr ON ((p.patient_id = vr.visit_id)))
+     JOIN public.rooms r ON ((vr.room_id = r.room_id)))
+  WHERE (r.room_type = 'ward'::public.room_type_enum);
+
+
+ALTER VIEW public.patients_in_ward_rooms_view OWNER TO alexander;
 
 --
 -- Name: patients_patient_id_seq; Type: SEQUENCE; Schema: public; Owner: alexander
@@ -295,21 +517,49 @@ ALTER SEQUENCE public.patients_patient_id_seq OWNED BY public.patients.patient_i
 
 
 --
--- Name: rooms; Type: TABLE; Schema: public; Owner: alexander
+-- Name: patients_rooms_diagnoses_view; Type: VIEW; Schema: public; Owner: alexander
 --
 
-CREATE TABLE public.rooms (
-    room_id integer NOT NULL,
-    department_id integer,
-    room_number character varying(10) NOT NULL,
-    room_name character varying NOT NULL,
-    room_type public.room_type_enum NOT NULL,
-    number_of_beds smallint,
-    CONSTRAINT chk_number_of_beds CHECK ((((room_type = 'ward'::public.room_type_enum) AND (number_of_beds IS NOT NULL) AND (number_of_beds > 0)) OR ((room_type <> 'ward'::public.room_type_enum) AND (number_of_beds IS NULL))))
-);
+CREATE VIEW public.patients_rooms_diagnoses_view AS
+ SELECT p.first_name,
+    p.last_name,
+    r.room_number,
+    d.diagnosis_name
+   FROM (((public.patients p
+     JOIN public.visits_rooms vr ON ((p.patient_id = vr.visit_id)))
+     JOIN public.rooms r ON ((vr.room_id = r.room_id)))
+     JOIN public.diagnoses d ON ((p.patient_id = d.patient_id)));
 
 
-ALTER TABLE public.rooms OWNER TO alexander;
+ALTER VIEW public.patients_rooms_diagnoses_view OWNER TO alexander;
+
+--
+-- Name: room_patient_count_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.room_patient_count_view AS
+SELECT
+    NULL::character varying(10) AS room_number,
+    NULL::bigint AS patient_count;
+
+
+ALTER VIEW public.room_patient_count_view OWNER TO alexander;
+
+--
+-- Name: rooms_beds_view; Type: VIEW; Schema: public; Owner: alexander
+--
+
+CREATE VIEW public.rooms_beds_view AS
+ SELECT room_id,
+    room_number,
+    room_name,
+    room_type,
+    number_of_beds
+   FROM public.rooms r
+  WHERE (room_type = 'ward'::public.room_type_enum);
+
+
+ALTER VIEW public.rooms_beds_view OWNER TO alexander;
 
 --
 -- Name: rooms_room_id_seq; Type: SEQUENCE; Schema: public; Owner: alexander
@@ -349,21 +599,6 @@ CREATE TABLE public.treatment_courses (
 ALTER TABLE public.treatment_courses OWNER TO alexander;
 
 --
--- Name: visits; Type: TABLE; Schema: public; Owner: alexander
---
-
-CREATE TABLE public.visits (
-    visit_id integer NOT NULL,
-    visit_date date DEFAULT CURRENT_DATE NOT NULL,
-    discharge_date date DEFAULT CURRENT_DATE NOT NULL,
-    patient_id integer NOT NULL,
-    doctor_id integer NOT NULL
-);
-
-
-ALTER TABLE public.visits OWNER TO alexander;
-
---
 -- Name: visits_diagnoses; Type: TABLE; Schema: public; Owner: alexander
 --
 
@@ -374,20 +609,6 @@ CREATE TABLE public.visits_diagnoses (
 
 
 ALTER TABLE public.visits_diagnoses OWNER TO alexander;
-
---
--- Name: visits_rooms; Type: TABLE; Schema: public; Owner: alexander
---
-
-CREATE TABLE public.visits_rooms (
-    visit_id integer NOT NULL,
-    room_id integer NOT NULL,
-    admission_date date DEFAULT CURRENT_DATE NOT NULL,
-    discharge_date date
-);
-
-
-ALTER TABLE public.visits_rooms OWNER TO alexander;
 
 --
 -- Name: visits_visit_id_seq; Type: SEQUENCE; Schema: public; Owner: alexander
@@ -496,6 +717,11 @@ COPY public.diagnoses (diagnosis_id, diagnosis_name, doctor_id, patient_id) FROM
 8	Желчнокаменная болезнь	8	8
 9	Синусит	9	9
 10	Сердечная недостаточность	10	10
+11	Гастрит	11	11
+12	Бронхит	12	12
+13	Пневмония	13	13
+14	Остеопороз	14	14
+15	Артрит	15	15
 \.
 
 
@@ -503,7 +729,7 @@ COPY public.diagnoses (diagnosis_id, diagnosis_name, doctor_id, patient_id) FROM
 -- Data for Name: doctors; Type: TABLE DATA; Schema: public; Owner: alexander
 --
 
-COPY public.doctors (doctor_id, first_name, last_name, patronymic, "position", department_id, is_doctor) FROM stdin;
+COPY public.doctors (doctor_id, first_name, last_name, patronymic, current_position, department_id, is_doctor) FROM stdin;
 1	Иван	Иванов	Иванович	Кардиолог	1	f
 2	Анна	Смирнова	Алексеевна	Невролог	2	f
 3	Пётр	Петров	Петрович	Педиатр	3	f
@@ -520,6 +746,11 @@ COPY public.doctors (doctor_id, first_name, last_name, patronymic, "position", d
 14	Семён	Лобанов	\N	Кардиолог	1	f
 15	Шон	Мёрфи	\N	Патологоанатом	12	f
 16	Ганнибал	Лектор	\N	Психиатр	13	f
+17	Александр	Петров	Иванович	Кардиолог	1	f
+18	Екатерина	Иванова	Алексеевна	Невролог	2	f
+19	Владимир	Сидоров	Петрович	Педиатр	3	f
+20	Татьяна	Михайлова	Сергеевна	Хирург	4	f
+21	Андрей	Кузнецов	Александрович	Онколог	5	f
 \.
 
 
@@ -546,16 +777,21 @@ COPY public.medications (medication_id, medication_name, indications, form, prod
 --
 
 COPY public.patients (patient_id, first_name, last_name, patronymic, birth_date, gender, phone_number, registration_date, age) FROM stdin;
-1	Иван	Иванов	Иванович	1980-05-15	male	89234567890	2024-12-13	44
-2	Анна	Смирнова	Алексеевна	1990-08-20	female	89987654321	2024-12-13	34
-3	Пётр	Петров	Петрович	1975-12-01	male	89122334455	2024-12-13	49
-4	Елена	Кузнецова	Сергеевна	2000-07-10	female	89233445566	2024-12-13	24
-5	Сергей	Морозов	Александрович	1985-11-25	male	89344556677	2024-12-13	39
-6	Мария	Волкова	Ивановна	1995-03-05	female	89455667788	2024-12-13	29
-7	Алексей	Соколов	Петрович	1970-02-28	male	89566778899	2024-12-13	54
-8	Ольга	Лебедева	Владимировна	1988-06-15	female	89677889900	2024-12-13	36
-9	Дмитрий	Козлов	\N	2003-01-01	male	89788990011	2024-12-13	21
-10	Наталья	Новикова	Сергеевна	1993-09-09	female	89899001122	2024-12-13	31
+1	Иван	Иванов	Иванович	1980-05-15	male	89234567890	2024-12-14	44
+2	Анна	Смирнова	Алексеевна	1990-08-20	female	89987654321	2024-12-14	34
+3	Пётр	Петров	Петрович	1975-12-01	male	89122334455	2024-12-14	49
+4	Елена	Кузнецова	Сергеевна	2000-07-10	female	89233445566	2024-12-14	24
+5	Сергей	Морозов	Александрович	1985-11-25	male	89344556677	2024-12-14	39
+6	Мария	Волкова	Ивановна	1995-03-05	female	89455667788	2024-12-14	29
+7	Алексей	Соколов	Петрович	1970-02-28	male	89566778899	2024-12-14	54
+8	Ольга	Лебедева	Владимировна	1988-06-15	female	89677889900	2024-12-14	36
+9	Дмитрий	Козлов	\N	2003-01-01	male	89788990011	2024-12-14	21
+10	Наталья	Новикова	Сергеевна	1993-09-09	female	89899001122	2024-12-14	31
+11	Александр	Петров	Иванович	1982-04-22	male	89900112233	2024-12-14	42
+12	Екатерина	Иванова	Алексеевна	1991-11-11	female	89011223344	2024-12-14	33
+13	Владимир	Сидоров	Петрович	1977-07-07	male	89126563654	2024-12-14	47
+14	Татьяна	Михайлова	Сергеевна	1984-08-08	female	89233445534	2024-12-14	40
+15	Андрей	Кузнецов	Александрович	1989-09-09	male	89344556674	2024-12-14	35
 \.
 
 
@@ -564,18 +800,26 @@ COPY public.patients (patient_id, first_name, last_name, patronymic, birth_date,
 --
 
 COPY public.rooms (room_id, department_id, room_number, room_name, room_type, number_of_beds) FROM stdin;
-1	1	101	Кабинет 101	examination	\N
-2	2	102	Кабинет 102	examination	\N
-3	3	103	Кабинет 103	examination	\N
-4	4	104	Кабинет 104	examination	\N
-5	5	105	Кабинет 105	examination	\N
-6	6	106	Кабинет 106	examination	\N
-7	7	107	Кабинет 107	examination	\N
-8	8	108	Кабинет 108	examination	\N
-9	9	109	Кабинет 109	examination	\N
-10	10	110	Кабинет 110	examination	\N
-11	1	201	Палата 201	ward	8
-12	5	205	Палата 205	ward	6
+1	1	101	Палата 101	ward	4
+2	2	102	Палата 102	ward	3
+3	3	103	Палата 103	ward	5
+4	4	104	Палата 104	ward	2
+5	5	105	Палата 105	ward	6
+6	6	106	Палата 106	ward	4
+7	7	107	Палата 107	ward	3
+8	8	108	Палата 108	ward	5
+9	9	109	Палата 109	ward	2
+10	10	110	Палата 110	ward	6
+11	1	201	Кабинет 201	examination	\N
+12	2	202	Кабинет 202	examination	\N
+13	3	203	Кабинет 203	examination	\N
+14	4	204	Кабинет 204	examination	\N
+15	5	205	Кабинет 205	examination	\N
+16	6	206	Кабинет 206	examination	\N
+17	7	207	Кабинет 207	examination	\N
+18	8	208	Кабинет 208	examination	\N
+19	9	209	Кабинет 209	examination	\N
+20	10	210	Кабинет 210	examination	\N
 \.
 
 
@@ -594,6 +838,11 @@ COPY public.treatment_courses (visit_id, medication_id, treatment_description, d
 8	8	Принимать 2 капсулы 2 раза в день	40.00	2
 9	9	Принимать 1 инъекцию 2 раза в день	20.00	2
 10	10	Принимать 2 таблетки 1 раз в день	20.00	1
+11	1	Принимать 1 таблетку 1 раз в день	500.00	1
+12	2	Принимать 10 мл 3 раза в день	10.00	3
+13	3	Принимать 2 таблетки 2 раза в день	850.00	2
+14	4	Принимать 3 капсулы 3 раза в день	600.00	3
+15	5	Принимать 5 таблеток 2 раза в день	500.00	2
 \.
 
 
@@ -612,6 +861,16 @@ COPY public.visits (visit_id, visit_date, discharge_date, patient_id, doctor_id)
 8	2024-08-09	2024-08-12	8	8
 9	2024-09-14	2024-09-18	9	9
 10	2024-10-22	2024-10-25	10	10
+11	2024-11-01	2024-11-05	11	11
+12	2024-12-01	2024-12-05	12	12
+13	2024-01-01	2024-01-05	13	13
+14	2024-02-01	2024-02-05	14	14
+15	2024-03-01	2024-03-05	15	15
+16	2024-04-01	2024-04-05	1	1
+17	2024-05-01	2024-05-05	2	2
+18	2024-06-01	2024-06-05	3	3
+19	2024-07-01	2024-07-05	4	4
+20	2024-08-01	2024-08-05	5	5
 \.
 
 
@@ -630,6 +889,11 @@ COPY public.visits_diagnoses (visit_id, diagnosis_id) FROM stdin;
 8	8
 9	9
 10	10
+11	11
+12	12
+13	13
+14	14
+15	15
 \.
 
 
@@ -637,17 +901,22 @@ COPY public.visits_diagnoses (visit_id, diagnosis_id) FROM stdin;
 -- Data for Name: visits_rooms; Type: TABLE DATA; Schema: public; Owner: alexander
 --
 
-COPY public.visits_rooms (visit_id, room_id, admission_date, discharge_date) FROM stdin;
-1	1	2024-01-15	\N
-2	2	2024-02-20	\N
-3	3	2024-03-12	\N
-4	4	2024-04-05	\N
-5	5	2024-05-10	\N
-6	6	2024-06-18	\N
-7	7	2024-07-01	\N
-8	8	2024-08-09	\N
-9	9	2024-09-14	\N
-10	10	2024-10-22	\N
+COPY public.visits_rooms (visit_id, room_id) FROM stdin;
+1	1
+2	2
+3	3
+4	4
+5	5
+6	6
+7	7
+8	8
+9	9
+10	10
+11	1
+12	2
+13	3
+14	4
+15	5
 \.
 
 
@@ -662,14 +931,14 @@ SELECT pg_catalog.setval('public.departments_department_id_seq', 13, true);
 -- Name: diagnoses_diagnosis_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander
 --
 
-SELECT pg_catalog.setval('public.diagnoses_diagnosis_id_seq', 10, true);
+SELECT pg_catalog.setval('public.diagnoses_diagnosis_id_seq', 15, true);
 
 
 --
 -- Name: doctors_doctor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander
 --
 
-SELECT pg_catalog.setval('public.doctors_doctor_id_seq', 16, true);
+SELECT pg_catalog.setval('public.doctors_doctor_id_seq', 21, true);
 
 
 --
@@ -683,21 +952,21 @@ SELECT pg_catalog.setval('public.medications_medication_id_seq', 10, true);
 -- Name: patients_patient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander
 --
 
-SELECT pg_catalog.setval('public.patients_patient_id_seq', 10, true);
+SELECT pg_catalog.setval('public.patients_patient_id_seq', 15, true);
 
 
 --
 -- Name: rooms_room_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander
 --
 
-SELECT pg_catalog.setval('public.rooms_room_id_seq', 12, true);
+SELECT pg_catalog.setval('public.rooms_room_id_seq', 20, true);
 
 
 --
 -- Name: visits_visit_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander
 --
 
-SELECT pg_catalog.setval('public.visits_visit_id_seq', 10, true);
+SELECT pg_catalog.setval('public.visits_visit_id_seq', 20, true);
 
 
 --
@@ -864,6 +1133,13 @@ CREATE INDEX idx_patients_last_name ON public.patients USING btree (last_name);
 
 
 --
+-- Name: idx_patients_patient_id; Type: INDEX; Schema: public; Owner: alexander
+--
+
+CREATE INDEX idx_patients_patient_id ON public.patients USING btree (patient_id);
+
+
+--
 -- Name: idx_visits_patient_id; Type: INDEX; Schema: public; Owner: alexander
 --
 
@@ -875,6 +1151,55 @@ CREATE INDEX idx_visits_patient_id ON public.visits USING btree (patient_id);
 --
 
 CREATE INDEX idx_visits_visit_date ON public.visits USING btree (visit_date);
+
+
+--
+-- Name: doctor_patient_count_view _RETURN; Type: RULE; Schema: public; Owner: alexander
+--
+
+CREATE OR REPLACE VIEW public.doctor_patient_count_view AS
+ SELECT d.first_name,
+    d.last_name,
+    count(v.patient_id) AS patient_count
+   FROM (public.doctors d
+     JOIN public.visits v ON ((d.doctor_id = v.doctor_id)))
+  GROUP BY d.doctor_id;
+
+
+--
+-- Name: diagnosis_patient_count_view _RETURN; Type: RULE; Schema: public; Owner: alexander
+--
+
+CREATE OR REPLACE VIEW public.diagnosis_patient_count_view AS
+ SELECT d.diagnosis_name,
+    count(p.patient_id) AS patient_count
+   FROM (public.diagnoses d
+     JOIN public.patients p ON ((d.patient_id = p.patient_id)))
+  GROUP BY d.diagnosis_id;
+
+
+--
+-- Name: room_patient_count_view _RETURN; Type: RULE; Schema: public; Owner: alexander
+--
+
+CREATE OR REPLACE VIEW public.room_patient_count_view AS
+ SELECT r.room_number,
+    count(vr.visit_id) AS patient_count
+   FROM (public.rooms r
+     JOIN public.visits_rooms vr ON ((r.room_id = vr.room_id)))
+  GROUP BY r.room_id;
+
+
+--
+-- Name: medication_treatment_count_view _RETURN; Type: RULE; Schema: public; Owner: alexander
+--
+
+CREATE OR REPLACE VIEW public.medication_treatment_count_view AS
+ SELECT m.medication_name,
+    count(tc.visit_id) AS treatment_count
+   FROM (public.medications m
+     JOIN public.treatment_courses tc ON ((m.medication_id = tc.medication_id)))
+  GROUP BY m.medication_id;
 
 
 --
