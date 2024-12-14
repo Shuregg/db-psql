@@ -1,10 +1,10 @@
 CREATE OR REPLACE PROCEDURE add_patient(
-    first_name VARCHAR,
-    last_name VARCHAR,
-    patronymic VARCHAR,
-    birth_date DATE,
-    gender GENDER_ENUM,
-    phone_number VARCHAR
+    IN first_name VARCHAR,
+    IN last_name VARCHAR,
+    IN patronymic VARCHAR,
+    IN birth_date DATE,
+    IN gender GENDER_ENUM,
+    IN phone_number VARCHAR
 )
 LANGUAGE plpgsql
 AS $$
@@ -15,25 +15,25 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_doctor(
-    first_name VARCHAR,
-    last_name VARCHAR,
-    patronymic VARCHAR,
-    position VARCHAR,
-    department_id INT,
-    is_doctor BOOLEAN
+    IN first_name VARCHAR,
+    IN last_name VARCHAR,
+    IN patronymic VARCHAR,
+    IN current_position VARCHAR,
+    IN department_id INT,
+    IN is_doctor BOOLEAN
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO doctors (first_name, last_name, patronymic, position, department_id, is_doctor)
-    VALUES (first_name, last_name, patronymic, position, department_id, is_doctor);
+    INSERT INTO doctors (first_name, last_name, patronymic, current_position, department_id, is_doctor)
+    VALUES (first_name, last_name, patronymic, current_position, department_id, is_doctor);
 END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_diagnosis(
-    diagnosis_name VARCHAR,
-    doctor_id INT,
-    patient_id INT
+    IN diagnosis_name VARCHAR,
+    IN doctor_id INT,
+    IN patient_id INT
 )
 LANGUAGE plpgsql
 AS $$
@@ -44,10 +44,10 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_visit(
-    visit_date DATE,
-    discharge_date DATE,
-    patient_id INT,
-    doctor_id INT
+    IN visit_date DATE,
+    IN discharge_date DATE,
+    IN patient_id INT,
+    IN doctor_id INT
 )
 LANGUAGE plpgsql
 AS $$
@@ -58,13 +58,13 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_medication(
-    medication_name VARCHAR,
-    indications VARCHAR,
-    form VARCHAR,
-    production_date DATE,
-    expiration_date DATE,
-    price NUMERIC,
-    amount INT
+    IN medication_name VARCHAR,
+    IN indications VARCHAR,
+    IN form VARCHAR,
+    IN production_date DATE,
+    IN expiration_date DATE,
+    IN price NUMERIC,
+    IN amount INT
 )
 LANGUAGE plpgsql
 AS $$

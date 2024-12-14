@@ -1,7 +1,7 @@
 -- Индексирование пациентов по фамилии
 CREATE INDEX idx_patients_last_name ON patients (last_name);
 -- Индексирование пациентов по id
-CREATE INDEX idx_patients_patient_id ON patients (patiend_id);
+CREATE INDEX idx_patients_patient_id ON patients (patient_id);
 
 -- Индексирование врачей по фамилии
 CREATE INDEX idx_doctors_last_name ON doctors (last_name);

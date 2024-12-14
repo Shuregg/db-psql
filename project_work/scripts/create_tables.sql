@@ -31,7 +31,7 @@ CREATE TABLE doctors (
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     patronymic VARCHAR,
-    position VARCHAR NOT NULL,
+    current_position VARCHAR NOT NULL,
     department_id INT,
     is_doctor BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -137,8 +137,6 @@ CREATE TABLE visits_diagnoses (
 CREATE TABLE visits_rooms (
     visit_id INT NOT NULL,
     room_id INT NOT NULL,
-    admission_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    discharge_date DATE,
     PRIMARY KEY (visit_id, room_id),
     FOREIGN KEY (visit_id) REFERENCES visits(visit_id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE
@@ -184,7 +182,7 @@ EXECUTE FUNCTION set_number_of_beds_null();
 CREATE OR REPLACE FUNCTION check_room_capacity()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id AND discharge_date IS NULL) >=
+    IF (SELECT COUNT(*) FROM visits_rooms WHERE room_id = NEW.room_id) >=
        (SELECT number_of_beds FROM rooms WHERE room_id = NEW.room_id) THEN
         RAISE EXCEPTION 'Room capacity exceeded';
     END IF;
